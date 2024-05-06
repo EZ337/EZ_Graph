@@ -7,15 +7,18 @@
 #include <map>
 #include <stdexcept>
 
-template <typename IDType = int>
-struct Vertex
-{
+#include <iostream>
 
+template <typename IDType = int>
+class Vertex
+{
+private:
     IDType id; // ID of the vertex. Integers are cleaner to deal with
     /// Set of pointers to adjacent vertices
     std::set<Vertex<IDType>*> incident_vertices;
     bool visited = false;
 
+public:
     /// @brief Creates a vertex with id v_id
     /// @param v_id ID of the created vertex
     Vertex(IDType v_id) : id(v_id) {}
@@ -28,15 +31,36 @@ struct Vertex
     /// @return The degree of this vertex
     int degree() {return incident_vertices.size();}
 
+    /// @brief Comparison operator. Comment and uncomment t
+    /// @param lhs vertex1
+    /// @param rhs vertex2
+    /// @return strong ordering of the comparison
+    friend auto operator<=>(const Vertex<IDType>& lhs, 
+        const Vertex<IDType>& rhs) 
+    {
+        return lhs.id <=> rhs.id;
+    }
+
     /// @brief Compares vertex with other vertex. Note, IDType must
     /// have a valid operator== overload.
     /// @return true if ids match. False otherwise
-    friend bool operator==(const Vertex<IDType>& v1, const Vertex<IDType>& v2) {return v1.id == v2.id;}
+    friend bool operator==(const Vertex<IDType>& v1, const Vertex<IDType>& v2) 
+    {return v1.id == v2.id;}
 
-    friend bool operator<(const Vertex<IDType>& v1, const Vertex<IDType>& v2) {return v1.id < v2.id;}
+    friend bool operator<(const Vertex<IDType>& v1, const Vertex<IDType>& v2) 
+    {return v1.id < v2.id;}
 
-    friend bool operator>(const Vertex<IDType>& v1, const Vertex<IDType>& v2) {return v1.id > v2.id;}
+    friend bool operator>(const Vertex<IDType>& v1, const Vertex<IDType>& v2) 
+    {return v1.id > v2.id;}
 
+    friend bool operator!=(const Vertex<IDType>& v1, const Vertex<IDType>& v2)
+    { return v1.id != v2.id;}
+
+    friend bool operator>=(const Vertex<IDType>& v1, const Vertex<IDType>& v2)
+    { return (v1>v2 || v1 == v2); }
+
+    friend bool operator<=(const Vertex<IDType>& v1, const Vertex<IDType>& v2)
+    { return (v1<v2 || v1 == v2); }
 
 };
 
@@ -77,9 +101,11 @@ public:
         }
 
         Vertex<IDType> vert(id); // Create new vertex
-        typename std::set<Vertex<IDType>>::iterator v = vertices.insert(vert).first; // Get the inserted vertex
+        typename std::set<Vertex<IDType>>::iterator v = 
+            vertices.insert(vert).first; // Get the inserted vertex
         
-        return const_cast<Vertex<IDType>*>(&(*v)); // Return pointer to the vertex
+        // Return pointer to the vertex
+        return const_cast<Vertex<IDType>*>(&(*v)); 
     }
     //void AddEdge(IDType v1, IDType v2);
 
@@ -102,13 +128,24 @@ public:
         }
     }
 
+    /// @brief Gets the vertex with id id. Creates the vertex and adds to graph
+    /// if it does not exist.
+    /// @param id ID to search for
+    /// @return Pointer to the vertex in the graph
+    Vertex<IDType>* operator[](IDType id)
+    {
+/*         typename std::set<Vertex<IDType>>::iterator vert = vertices.end();
+        if ((vert = vertices.find(id)) != vertices.end())
+        {
+            std::cout << vert->id <<std::endl;
+            return const_cast<Vertex<IDType>*>(&(*vert));
+        } */
+
+        // Since we're using a set, we don't have to search. It's already done
+        // For us
+        return AddVertex(id);
+    }
 };
 
-
-template <typename IDType>
-bool operator<(const Vertex<IDType>& v1, const Vertex<IDType>& v2);
-
-template <typename IDType>
-bool operator==(const Vertex<IDType>& v1, const Vertex<IDType>& v2);
 
 #endif  // GRAPH_H
