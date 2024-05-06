@@ -3,14 +3,20 @@
 #include "Graph.h"
 
 template <typename IDType>
-Graph<IDType>::Graph(IDType x)
+void Graph<IDType>::AddVertex(IDType id)
 {
-    Vertex<IDType> vert(x);
+    Vertex<IDType> vert(id);
     vertices.insert(vert);
 }
 
 
 int main()
 {
-    Graph<> graph(3);
+    Graph<> graph;
+    graph.AddVertex(3);
+    graph.AddVertex(8);
+    graph.AddVertex(4);
+    graph.AddVertex(2);
+    graph.AddVertex(3);
+    graph.AddVertex(3);
 }

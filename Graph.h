@@ -9,15 +9,11 @@
 template <typename IDType = int>
 struct Vertex
 {
-#pragma region Vertex data
 
     IDType id; // ID of the vertex. Integers are cleaner to deal with
     /// Set of adjacent vertices
     std::set<Vertex> adjacentVertices;
     bool visited = false;
-#pragma endregion
-
-#pragma region Vertex Functions
 
     /// @brief Creates a vertex with id v_id
     /// @param v_id ID of the created vertex
@@ -33,7 +29,6 @@ struct Vertex
 
     friend bool operator<(const Vertex<IDType>& v1, const Vertex<IDType>& v2) {return v1.id < v2.id;}
 
-#pragma endregion
 
 };
 
@@ -41,8 +36,9 @@ template <typename IDType = int>
 struct Edge
 {
     std::pair<Vertex<IDType>, Vertex<IDType>> connection;
-    bool isWeighted = false;
     int weight = 0;
+
+    Edge(const Vertex<IDType>& v1, const Vertex<IDType>& v2, int weight = 0); 
 };
 
 
@@ -59,7 +55,8 @@ private:
 
 
 public:
-    Graph(IDType);
+    void AddVertex(IDType);
+    void AddEdge(IDType v1, IDType v2);
 
 };
 
